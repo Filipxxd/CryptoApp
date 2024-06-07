@@ -3,13 +3,14 @@ from tkinter import messagebox
 from customtkinter import *
 
 from core.crypts.DSACrypt import DSACrypt
-from gui.shared.dialogs import FileDialogs
-from gui.shared.widgets.FileEntry import FileEntry
+from GUI.Base.FrameBase import FrameBase
+from GUI.Shared import FileDialogs
+from GUI.Shared.FileEntry import FileEntry
 
 
-class CheckFrame(CTkFrame):
+class CheckFrame(FrameBase):
     def __init__(self, parent, return_frame: CTkFrame):
-        CTkFrame.__init__(self, parent, fg_color='transparent')
+        FrameBase.__init__(self, parent)
 
         self.return_frame = return_frame
         self.zip_file_path = StringVar()
@@ -22,9 +23,9 @@ class CheckFrame(CTkFrame):
                                         self.zip_file_path,
                                         'Vybrat archiv',
                                         'Podepsaný Soubor (Archiv)',
-                                        lambda: FileExtensions.ask_file(self.zip_file_path,
+                                        lambda: FileDialogs.ask_file(self.zip_file_path,
                                                                         'Vyberte Podepsaný Archiv Se Souborem',
-                                                                        [('ZIP Archiv',
+                                                                     [('ZIP Archiv',
                                                                           f'*.{DSACrypt().ext_archive}')]))
         zip_file_path_frame.grid(row=0, column=0, pady=(0, 15), sticky='w')
 
@@ -35,9 +36,9 @@ class CheckFrame(CTkFrame):
                                           self.public_key_path,
                                           'Vybrat klíč',
                                           'Veřejný Klíč',
-                                          lambda: FileExtensions.ask_file(self.public_key_path,
+                                          lambda: FileDialogs.ask_file(self.public_key_path,
                                                                           'Vyberte Veřejný Klíč',
-                                                                          [('Veřejný klíč',
+                                                                       [('Veřejný klíč',
                                                                             f'*.{DSACrypt().ext_public}')]))
         public_key_path_frame.grid(row=0, column=0, pady=(0, 15), sticky='w')
 

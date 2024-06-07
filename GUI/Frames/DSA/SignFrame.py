@@ -3,17 +3,18 @@ from glob import glob
 from tkinter import messagebox
 
 from customtkinter import *
-import datetime
+from datetime import datetime
 
 from core.crypts.DSACrypt import DSACrypt
-from gui.shared.dialogs import FileDialogs
-from gui.shared.widgets.FileEntry import FileEntry
+from GUI.Base.FrameBase import FrameBase
+from GUI.Shared import FileDialogs
+from GUI.Shared.FileEntry import FileEntry
 from core.ValidationError import ValidationError
 
 
-class SignFrame(CTkFrame):
-    def __init__(self, parent, return_frame: CTkFrame):
-        CTkFrame.__init__(self, parent, fg_color='transparent')
+class SignFrame(FrameBase):
+    def __init__(self, parent: CTkFrame, return_frame: CTkFrame):
+        FrameBase.__init__(self, parent)
 
         self.return_frame = return_frame
 
@@ -61,7 +62,7 @@ class SignFrame(CTkFrame):
                                 self.output_path,
                                 'Vybrat složku',
                                 'Výstupní Adresář',
-                                lambda: FileExtensions.ask_directory(self.output_path, 'Vyberte složku'))
+                                lambda: FileDialogs.ask_directory(self.output_path, 'Vyberte složku'))
         output_path.grid(row=0, column=0, pady=(0, 15), sticky='w')
 
         key_file_frame = CTkFrame(self, corner_radius=10)
@@ -71,14 +72,14 @@ class SignFrame(CTkFrame):
                                    self.private_key_path,
                                    'Vybrat klíč',
                                    'Soukromý Klíč',
-                                   lambda: FileExtensions.ask_file(self.private_key_path,
-                                                                   'Vyberte Soukromý Klíč',
-                                                                   [('Soukromý klíč',
-                                                                     f'*.{DSACrypt().ext_private}')]))
+                                   lambda: FileDialogs.ask_file(self.private_key_path,
+                                                                'Vyberte Soukromý Klíč',
+                                                                [('Soukromý klíč',
+                                                                  f'*.{DSACrypt().ext_private}')]))
         key_path_frame.grid(row=0, column=0, pady=(0, 15), sticky='w')
 
         control_btn_frame = CTkFrame(self, fg_color='transparent')
-        control_btn_frame.grid(row=7, column=0, pady=(40, 0))
+        control_btn_frame.grid(row=7, column=0, pady=(10, 0))
 
         back_btn = CTkButton(
             control_btn_frame,
@@ -158,9 +159,9 @@ class SignFrame(CTkFrame):
         self.__return_back()
 
     def __select_file(self):
-        FileExtensions.ask_file(self.file_path,
-                                'Vyberte soubor k podpisu',
-                                [('Všechny soubory', f'*')])
+        FileDialogs.ask_file(self.file_path,
+                             'Vyberte soubor k podpisu',
+                             [('Všechny soubory', f'*')])
 
         path = self.file_path.get()
 
@@ -174,7 +175,7 @@ class SignFrame(CTkFrame):
         self.type.set(f'Přípona: {name[1]}')
         self.file_size.set(f'Velikost souboru: {os.path.getsize(path)} B')
 
-        datetime_created = datetime.datetime.fromtimestamp(os.path.getctime(path)).strftime('%d/%m/%Y %H:%M:%S')
+        datetime_created = datetime.fromtimestamp(os.path.getctime(path)).strftime('%d/%m/%Y %H:%M:%S')
         self.time_created.set(f'Datum vytvoření: {datetime_created}')
-        datetime_updated = datetime.datetime.fromtimestamp(os.path.getmtime(path)).strftime('%d/%m/%Y %H:%M:%S')
+        datetime_updated = datetime.fromtimestamp(os.path.getmtime(path)).strftime('%d/%m/%Y %H:%M:%S')
         self.time_updated.set(f'Datum aktualizace: {datetime_updated}')
