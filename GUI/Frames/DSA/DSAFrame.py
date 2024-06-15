@@ -1,18 +1,18 @@
 from customtkinter import CTkButton, CTkFrame
 
-from GUI.Base.FrameBase import FrameBase
-from GUI.Frames.DSA.CheckFrame import CheckFrame
-from GUI.Frames.DSA.SignFrame import SignFrame
+from GUI.Base.PageFrame import PageFrame
+from GUI.Frames.DSA.CheckFrame import CheckPageFrame
+from GUI.Frames.DSA.SignFrame import SignPageFrame
 
 
-class DSAFrame(FrameBase):
+class DSAPageFrame(PageFrame):
     def __init__(self, parent: CTkFrame, return_frame: CTkFrame):
-        FrameBase.__init__(self, parent)
+        super().__init__(parent)
         self.return_frame = return_frame
 
-        container_frame = FrameBase(self)
-        sign_page = SignFrame(self, container_frame)
-        check_page = CheckFrame(self, container_frame)
+        container_frame = PageFrame(self)
+        sign_page = SignPageFrame(self, container_frame)
+        check_page = CheckPageFrame(self, container_frame)
 
         buttons_frame = CTkFrame(container_frame)
         buttons_frame.grid(row=0, column=0)
