@@ -22,14 +22,14 @@ class StringExtensions:
         return filtered_text
 
     @staticmethod
-    def sanitize_text(text: str, regex_filter_include=r'[A-Z]') -> str:
+    def sanitize_text(text: str, regex_keep=r'[A-Z]') -> str:
         filtered_text = unidecode(text.upper().strip())
-        return ''.join(re.findall(regex_filter_include, filtered_text))
+        return ''.join(re.findall(regex_keep, filtered_text))
 
     @staticmethod
-    def remove_first_occurrence(input_string: str, char_to_remove: chr) -> str:
-        first_occurrence_index = input_string.find(char_to_remove)
+    def remove_first_occurrence(text: str, char_to_remove: chr) -> str:
+        first_occurrence_index = text.find(char_to_remove)
         if first_occurrence_index != -1:
-            return input_string[:first_occurrence_index] + input_string[first_occurrence_index + 1:]
+            return text[:first_occurrence_index] + text[first_occurrence_index + 1:]
 
-        return input_string
+        return text

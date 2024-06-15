@@ -1,11 +1,10 @@
-import tkinter as tk
 from typing import Callable
 
-from customtkinter import CTkEntry, CTkLabel, DISABLED, CTkButton, CTkFrame
+from customtkinter import CTkEntry, CTkLabel, DISABLED, CTkButton, CTkFrame, StringVar
 
 
 class FileEntry(CTkFrame):
-    def __init__(self, parent, path_var: tk.StringVar, btn_text: str, label_text: str, btn_command: Callable):
+    def __init__(self, parent, path_var: StringVar, btn_text: str, label_text: str, btn_command: Callable):
         CTkFrame.__init__(self, parent, fg_color='transparent')
 
         file_path_label = CTkLabel(self, text=label_text, font=('Arial', 13, 'bold'))
