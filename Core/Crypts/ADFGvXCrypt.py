@@ -31,7 +31,7 @@ class ADFGvXCrypt:
 
     def encrypt(self, plain_text: str, key: str, alphabet='') -> str:
         key = StringExtensions.sanitize_text(key)
-        plain_text = StringExtensions.sanitize_text(plain_text, r'[^A-Z0-9 ]')
+        plain_text = StringExtensions.sanitize_text(plain_text, r'[A-Z0-9 ]')
         alphabet = self.fill_alphabet(alphabet)
         alphabet_matrix = self.__create_matrix(alphabet)
 
@@ -93,7 +93,7 @@ class ADFGvXCrypt:
 
     def decrypt(self, encrypted_text: str, key: str, alphabet='') -> str:
         key = StringExtensions.sanitize_text(key)
-        encrypted_text = StringExtensions.sanitize_text(encrypted_text, f'[^{self.version.name}]')
+        encrypted_text = StringExtensions.sanitize_text(encrypted_text, f'[{self.version.name}]')
 
         if len(encrypted_text) < 1:
             raise ValidationError('Text nesmí být prázdný')
@@ -181,7 +181,7 @@ class ADFGvXCrypt:
 
         # 5x5 vs 6x6 available chars
         if self.version == Version.ADFGVX:
-            alphabet = StringExtensions.sanitize_text(current_alphabet, r'[^A-Z0-9]')
+            alphabet = StringExtensions.sanitize_text(current_alphabet, r'[A-Z0-9]')
             available_characters += string.digits
         else:
             alphabet = StringExtensions.sanitize_text(current_alphabet).replace(self.ignored_char, '')

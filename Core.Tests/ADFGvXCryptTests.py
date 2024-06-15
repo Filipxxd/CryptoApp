@@ -132,22 +132,24 @@ class ADFGvXCryptTest(unittest.TestCase):
         key = 'petrklíč123'
         alphabet = string.ascii_uppercase + string.digits
         expected_encrypt = 'VGDAAGADVGAAAXVAAGFGXVXFAAGXDAAFFGVFVFDFGVFDXDGADAFAFAGDAFVVGAVXVGAGAAXVGAGFVDFFDADFVAFDFGFXAAGAGAGXAGAVGFDFVDGFGGDVDGAF'
+        expected_decrypt = 'MOJE JMENO JE PEPA NOVAK A JE MNE 18'
 
         actual_encrypt = crypt.encrypt(text, key, alphabet)
-        self.assertTrue(expected_encrypt == actual_encrypt)
+        self.assertEqual(expected_encrypt, actual_encrypt)
 
         actual_decrypt = crypt.decrypt(actual_encrypt, key, alphabet)
-        self.assertTrue(actual_decrypt == 'MOJE JMENO JE PEPA NOVAK A JE MNE 18')
+        self.assertEqual(actual_decrypt, expected_decrypt)
 
     def test_ADFGX_encrypt_odd_text_odd_key(self):
         crypt = ADFGvXCrypt(Version.ADFGX)
         text = 'asdfghi'
         key = 'asdfg'
         alphabet = string.ascii_uppercase
+        expected_decrypt = text.upper()
 
         actual_encrypt = crypt.encrypt(text, key, alphabet)
         actual_decrypt = crypt.decrypt(actual_encrypt, key, alphabet)
-        self.assertEqual(text.upper(), actual_decrypt)
+        self.assertEqual(actual_decrypt, expected_decrypt)
 
     def test_ADFGX_encrypt_even_text_even_key(self):
         crypt = ADFGvXCrypt(Version.ADFGX)
@@ -155,12 +157,13 @@ class ADFGvXCryptTest(unittest.TestCase):
         key = 'asdf'
         alphabet = string.ascii_uppercase
         expected_encrypt = 'AADGDDFAFAGD'
+        expected_decrypt = text.upper()
 
         actual_encrypt = crypt.encrypt(text, key, alphabet)
-        self.assertTrue(expected_encrypt == actual_encrypt)
+        self.assertEqual(expected_encrypt, actual_encrypt)
 
         actual_decrypt = crypt.decrypt(actual_encrypt, key, alphabet)
-        self.assertTrue(actual_decrypt == text.upper())
+        self.assertEqual(actual_decrypt, expected_decrypt)
 
     def test_ADFGX_encrypt_odd_text_even_key(self):
         crypt = ADFGvXCrypt(Version.ADFGX)
@@ -168,12 +171,13 @@ class ADFGvXCryptTest(unittest.TestCase):
         key = 'sdaf'
         alphabet = string.ascii_uppercase
         expected_encrypt = 'GDAGDFAAAD'
+        expected_decrypt = text.upper()
 
         actual_encrypt = crypt.encrypt(text, key, alphabet)
-        self.assertTrue(expected_encrypt == actual_encrypt)
+        self.assertEqual(expected_encrypt, actual_encrypt)
 
         actual_decrypt = crypt.decrypt(actual_encrypt, key, alphabet)
-        self.assertTrue(actual_decrypt == text.upper())
+        self.assertEqual(actual_decrypt, expected_decrypt)
 
     def test_ADFGX_encrypt_even_text_odd_key(self):
         crypt = ADFGvXCrypt(Version.ADFGX)
@@ -181,12 +185,13 @@ class ADFGvXCryptTest(unittest.TestCase):
         key = 'sdfga'
         alphabet = string.ascii_uppercase
         expected_encrypt = 'ADADFGAFDAGD'
+        expected_decrypt = text.upper()
 
         actual_encrypt = crypt.encrypt(text, key, alphabet)
-        self.assertTrue(expected_encrypt == actual_encrypt)
+        self.assertEqual(expected_encrypt, actual_encrypt)
 
         actual_decrypt = crypt.decrypt(actual_encrypt, key, alphabet)
-        self.assertTrue(actual_decrypt == text.upper())
+        self.assertEqual(actual_decrypt, expected_decrypt)
 
     def test_ADFGX_encrypt_even_text_odd_key_reversed(self):
         crypt = ADFGvXCrypt(Version.ADFGX)
@@ -194,29 +199,43 @@ class ADFGvXCryptTest(unittest.TestCase):
         key = 'gfdsa'
         alphabet = string.ascii_uppercase
         expected_encrypt = 'ADGAADFAGDFD'
+        expected_decrypt = text.upper()
 
         actual_encrypt = crypt.encrypt(text, key, alphabet)
-        self.assertTrue(expected_encrypt == actual_encrypt)
+        self.assertEqual(expected_encrypt, actual_encrypt)
 
         actual_decrypt = crypt.decrypt(actual_encrypt, key, alphabet)
-        self.assertTrue(actual_decrypt == text.upper())
+        self.assertEqual(actual_decrypt, expected_decrypt)
 
-    def test_ADFGX_full_sentence(self):
-        crypt = ADFGvXCrypt(Version.ADFGX)
-        text = 'Moje jméno je Pepa Novák a je mně 18.'
+    def test_ADFGX_full_sentence_cz(self):
+        crypt = ADFGvXCrypt(Version.ADFGX, 'cz')
+        text = 'Moje jméno je Pepa Novák a je mně 18.QQ'
         key = 'petrklíč123'
         alphabet = string.ascii_uppercase
+        expected_decrypt = 'MOIE IMENO IE PEPA NOVAK A IE MNE 18QQ'
 
         actual_encrypt = crypt.encrypt(text, key, alphabet)
         actual_decrypt = crypt.decrypt(actual_encrypt, key, alphabet)
-        self.assertTrue(actual_decrypt == 'MOIE IMENO IE PEPA NOVAK A IE MNE 18')
+        self.assertEqual(actual_decrypt, expected_decrypt)
+
+    def test_ADFGX_full_sentence_en(self):
+        crypt = ADFGvXCrypt(Version.ADFGX, 'en')
+        text = 'Moje jméno je Pepa Novák a je mně 18.QQ'
+        key = 'petrklíč123'
+        alphabet = string.ascii_uppercase
+        expected_decrypt = 'MOJE JMENO JE PEPA NOVAK A JE MNE 18KK'
+
+        actual_encrypt = crypt.encrypt(text, key, alphabet)
+        actual_decrypt = crypt.decrypt(actual_encrypt, key, alphabet)
+        self.assertEqual(actual_decrypt, expected_decrypt)
 
     def test_ADFGX_key_multiple_occurrences(self):
         crypt = ADFGvXCrypt(Version.ADFGX)
         text = 'asdfpoder'
         key = 'kakfk'
         alphabet = string.ascii_uppercase
+        expected_decrypt = text.upper()
 
         actual_encrypt = crypt.encrypt(text, key, alphabet)
         actual_decrypt = crypt.decrypt(actual_encrypt, key, alphabet)
-        self.assertTrue(actual_decrypt == text.upper())
+        self.assertEqual(actual_decrypt, expected_decrypt)

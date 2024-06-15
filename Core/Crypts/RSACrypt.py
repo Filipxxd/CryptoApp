@@ -2,7 +2,7 @@ import math
 import random
 import re
 
-from core.ValidationError import ValidationError
+from Core.ValidationError import ValidationError
 
 
 class RSACrypt:

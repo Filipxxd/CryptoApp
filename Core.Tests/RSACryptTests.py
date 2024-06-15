@@ -1,29 +1,31 @@
 import string
 import unittest
 
-from core.crypts.RSACrypt import RSACrypt
+from Core.Crypts.RSACrypt import RSACrypt
 
 
-class RSACipherTests(unittest.TestCase):
+class RSACryptTests(unittest.TestCase):
     def test_ordinal(self):
         crypt = RSACrypt()
         text = 'Pepa je strašně hodný hoch a je mu -1 let. :-)'
         p = crypt.get_random_prime()
         q = crypt.get_random_prime()
         public, private = crypt.create_keys(p, q)
+
         enc = crypt.encrypt(text, public)
         dec = crypt.decrypt(enc, private)
-        self.assertTrue(dec == text)
+        self.assertEqual(dec, text)
 
     def test_all_chars(self):
         crypt = RSACrypt()
-        text = '!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýýþÿ'
+        text = '!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýýþÿ'
         p = crypt.get_random_prime()
         q = crypt.get_random_prime()
         public, private = crypt.create_keys(p, q)
+
         enc = crypt.encrypt(text, public)
         dec = crypt.decrypt(enc, private)
-        self.assertTrue(dec == text)
+        self.assertEqual(dec, text)
 
     def test_all_chars_ordinal_usage(self):
         crypt = RSACrypt()
@@ -31,9 +33,10 @@ class RSACipherTests(unittest.TestCase):
         p = crypt.get_random_prime()
         q = crypt.get_random_prime()
         public, private = crypt.create_keys(p, q)
+
         enc = crypt.encrypt(text, public)
         dec = crypt.decrypt(enc, private)
-        self.assertTrue(dec == text)
+        self.assertEqual(dec, text)
 
     def test_short_text(self):
         crypt = RSACrypt()
@@ -41,9 +44,10 @@ class RSACipherTests(unittest.TestCase):
         p = crypt.get_random_prime()
         q = crypt.get_random_prime()
         public, private = crypt.create_keys(p, q)
+
         enc = crypt.encrypt(text, public)
         dec = crypt.decrypt(enc, private)
-        self.assertTrue(dec == text)
+        self.assertEqual(dec, text)
 
     def test_long_text(self):
         crypt = RSACrypt()
@@ -51,9 +55,10 @@ class RSACipherTests(unittest.TestCase):
         p = crypt.get_random_prime()
         q = crypt.get_random_prime()
         public, private = crypt.create_keys(p, q)
+
         enc = crypt.encrypt(text, public)
         dec = crypt.decrypt(enc, private)
-        self.assertTrue(dec == text)
+        self.assertEqual(dec, text)
 
     def test_invert_keys(self):
         crypt = RSACrypt()
@@ -61,9 +66,10 @@ class RSACipherTests(unittest.TestCase):
         p = crypt.get_random_prime()
         q = crypt.get_random_prime()
         public, private = crypt.create_keys(p, q)
+
         enc = crypt.encrypt(text, private)
         dec = crypt.decrypt(enc, public)
-        self.assertTrue(dec == text)
+        self.assertEqual(dec, text)
 
     def test_repetitive(self):
         for _ in range(1000):
@@ -72,9 +78,10 @@ class RSACipherTests(unittest.TestCase):
             p = crypt.get_random_prime()
             q = crypt.get_random_prime()
             public, private = crypt.create_keys(p, q)
+
             enc = crypt.encrypt(text, private)
             dec = crypt.decrypt(enc, public)
-            self.assertTrue(dec == text)
+            self.assertEqual(dec, text)
 
     def test_out_of_range_chars(self):
         crypt = RSACrypt()
@@ -82,4 +89,5 @@ class RSACipherTests(unittest.TestCase):
         p = crypt.get_random_prime()
         q = crypt.get_random_prime()
         public, private = crypt.create_keys(p, q)
+
         self.assertRaises(ValueError, crypt.encrypt, text, public)

@@ -1,6 +1,6 @@
 from unidecode import unidecode
-from core.ValidationError import ValidationError
-import re as re
+from Core.ValidationError import ValidationError
+import re
 
 
 class PlayfairCipher:

@@ -1,6 +1,6 @@
 import math
 
-from core.ValidationError import ValidationError
+from Core.ValidationError import ValidationError
 
 
 class AffineCrypt:
