@@ -1,11 +1,11 @@
 import tkinter as tk
 from tkinter import messagebox, DISABLED
 import re
-from customtkinter import CTkFrame, CTkLabel, CTkEntry, CTkButton, CTkTextbox
+from customtkinter import CTkFrame, CTkLabel, CTkEntry, CTkButton
 
 from GUI.Base.PageFrame import PageFrame
-from Core.Crypts.RSACrypt import RSACrypt
-from Core.ValidationError import ValidationError
+from Crypts.RSACrypt import RSACrypt
+from Exceptions.ValidationError import ValidationError
 from GUI.Shared.TextBox import TextBox
 
 
@@ -66,13 +66,11 @@ class RSAFrame(PageFrame):
         button_frame = CTkFrame(input_frame, fg_color='transparent')
         button_frame.grid(row=9, column=0, columnspan=4, pady=10)
 
-        CTkButton(button_frame, text='Generovat Q a P', command=self.__generate_primes).grid(row=0, column=0, padx=5)
+        CTkButton(button_frame, text='Zpět', command=lambda: self.__return_back()).grid(row=0, column=0, padx=5)
         CTkButton(button_frame, text='Generovat Klíče', command=self.__generate_keys).grid(row=0, column=1, padx=5)
 
         CTkButton(button_frame, text='Šifrovat', command=lambda: self.__crypt('encrypt')).grid(row=1, column=0, padx=5)
         CTkButton(button_frame, text='Dešifrovat', command=lambda: self.__crypt('decrypt')).grid(row=1, column=1, padx=5)
-
-        CTkButton(button_frame, text='Zpět', command=lambda: self.__return_back()).grid(row=2, column=0, padx=5)
 
         # Output
         output_frame = CTkFrame(center_frame, fg_color='transparent')
@@ -93,22 +91,9 @@ class RSAFrame(PageFrame):
         self.output.set('')
         self.return_frame.tkraise()
 
-    def __generate_primes(self):
-        first = self.crypt.get_random_prime()
-        second = self.crypt.get_random_prime()
-
-        while second == first:
-            second = self.crypt.get_random_prime()
-
-        self.q_entry.set(str(first))
-        self.p_entry.set(str(second))
-
     def __generate_keys(self):
         try:
-            q = self.q_entry.get()
-            p = self.p_entry.get()
-
-            public, private = self.crypt.create_keys(self.__get_as_int(q), self.__get_as_int(p))
+            public, private = self.crypt.create_keys()
 
             self.modulus_entry.set(str(public[0]))
             self.public_entry.set(str(public[1]))
