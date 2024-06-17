@@ -1,6 +1,5 @@
 import os
-from tkinter import StringVar
-from tkinter import filedialog
+from tkinter import StringVar, filedialog
 
 
 def ask_directory(variable: StringVar, title: str):
