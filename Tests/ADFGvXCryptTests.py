@@ -1,6 +1,6 @@
 import string
 import unittest
-from Core.Crypts.ADFGvXCrypt import ADFGvXCrypt, Version
+from Crypts.ADFGvXCrypt import ADFGvXCrypt, Version
 
 
 class ADFGvXCryptTest(unittest.TestCase):
