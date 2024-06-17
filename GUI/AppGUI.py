@@ -1,34 +1,64 @@
 from customtkinter import CTkButton, CTkFrame, CTk
 
-from GUI.Base.FrameBase import FrameBase
-from GUI.Frames.DSA.DSAFrame import DSAFrame
+from GUI.Base.PageFrame import PageFrame
+from GUI.Frames.ADFGvXFrame import ADFGvXFrame
+from GUI.Frames.AffineFrame import AffineFrame
+from GUI.Frames.DSA.DSAFrame import DSAPageFrame
+from GUI.Frames.PlayfairFrame import PlayfairFrame
+from GUI.Frames.RSAFrame import RSAFrame
 
 
 class AppGUI(CTk):
     def __init__(self):
         super().__init__()
 
-        window = CTkFrame(self, fg_color='transparent')
-        window.grid(row=0, column=0)
+        root = CTkFrame(self, fg_color='transparent')
+        root.grid(row=0, column=0, sticky='nsew')
 
-        home_frame = FrameBase(window)
-        dsa_frame = DSAFrame(window, home_frame)
+        home_frame = PageFrame(root)
+        dsa_frame = DSAPageFrame(root, home_frame)
+        rsa_frame = RSAFrame(root, home_frame)
+        adfgvx_frame = ADFGvXFrame(root, home_frame)
+        playfair_frame = PlayfairFrame(root, home_frame)
+        affine_frame = AffineFrame(root, home_frame)
 
         buttons_frame = CTkFrame(home_frame)
         buttons_frame.grid(row=0, column=0)
 
-        dsa_open_btn = CTkButton(
+        CTkButton(
             buttons_frame,
-            text='DSA - Podpis Souborů',
+            text='DSA',
             command=lambda: dsa_frame.tkraise()
-        )
-        dsa_open_btn.grid(row=0, column=0)
+        ).grid(row=0, column=0, pady=7)
 
-        close_program_btn = CTkButton(
+        CTkButton(
             buttons_frame,
-            text='Ukončit Program',
+            text='RSA',
+            command=lambda: rsa_frame.tkraise()
+        ).grid(row=1, column=0)
+
+        CTkButton(
+            buttons_frame,
+            text='ADFGVX',
+            command=lambda: adfgvx_frame.tkraise()
+        ).grid(row=2, column=0, pady=7)
+
+        CTkButton(
+            buttons_frame,
+            text='Playfair',
+            command=lambda: playfair_frame.tkraise()
+        ).grid(row=3, column=0)
+
+        CTkButton(
+            buttons_frame,
+            text='Affine',
+            command=lambda: affine_frame.tkraise()
+        ).grid(row=4, column=0, pady=7)
+
+        CTkButton(
+            buttons_frame,
+            text='Exit',
             command=lambda: self.destroy()
-        )
-        close_program_btn.grid(row=1, column=0)
+        ).grid(row=5, column=0)
 
         home_frame.tkraise()
