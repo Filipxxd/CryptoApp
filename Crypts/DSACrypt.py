@@ -3,8 +3,8 @@ import base64
 import os
 from zipfile import ZipFile
 
-from Core.Crypts.RSACrypt import RSACrypt
-from Core.ValidationError import ValidationError
+from Crypts.RSACrypt import RSACrypt
+from Exceptions.ValidationError import ValidationError
 
 
 class DSACrypt:
@@ -45,9 +45,8 @@ class DSACrypt:
             files = zip_file.namelist()
 
             if len(files) > 2:
-                raise ValidationError(f'Archive File Error - must contain only two '
-                                      f'files: the signature (\'.{self.ext_signature}\')'
-                                      f' and the signed file itself.')
+                raise ValueError('Archive File Error - must contain only two '
+                                 f'files: the signature (\'.{self.ext_signature}\') and the signed file itself.')
 
             for file in files:
                 if file.endswith(self.ext_signature):
@@ -60,22 +59,14 @@ class DSACrypt:
 
         try:
             decrypted_signature = self.rsa.decrypt(signature, public_key)
-        except ValidationError:
+            hashed_file = self.__sha_hash(file_c)
+
+            return hashed_file == decrypted_signature
+        except Exception:
             return False
 
-        hashed_file = self.__sha_hash(file_c)
-
-        return hashed_file == decrypted_signature
-
     def get_key_files(self):
-        q = self.rsa.get_random_prime()
-
-        while True:
-            p = self.rsa.get_random_prime()
-            if p != q:
-                break
-
-        public, private = self.rsa.create_keys(q, p)
+        public, private = self.rsa.create_keys()
 
         file_path = f'{self.output_folder}/private.{self.ext_private}'
         file_content = self.key_prefix + self.__string_to_base64(f'{private[0]}{self.key_separator}{private[1]}')
@@ -96,8 +87,9 @@ class DSACrypt:
     def __base64_bytes_to_string(self, text: bytes) -> str:
         return base64.b64decode(text).decode(self.encoding)
 
-    def __save_file(self, file_path: str, content: str):
-        with open(self.update_name_if_exists(file_path), 'w') as file:
+    @staticmethod
+    def __save_file(file_path: str, content: str):
+        with open(DSACrypt.update_name_if_exists(file_path), 'w') as file:
             file.write(content)
 
     @staticmethod

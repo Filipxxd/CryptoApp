@@ -3,7 +3,7 @@ import string
 from enum import Enum
 
 from Core.StringExtensions import StringExtensions
-from Core.ValidationError import ValidationError
+from Exceptions.ValidationError import ValidationError
 
 
 class Version(Enum):
@@ -36,7 +36,7 @@ class ADFGvXCrypt:
         alphabet_matrix = self.__create_matrix(alphabet)
 
         if len(plain_text) < 1:
-            raise ValidationError('Text je prázdný nebo obsahuje nepovolené znaky')
+            ''
 
         if len(key) < self.min_key_length:
             raise ValidationError(f'Klíč musí být dlouhý alespoň {self.min_key_length} znaků')
@@ -96,7 +96,7 @@ class ADFGvXCrypt:
         encrypted_text = StringExtensions.sanitize_text(encrypted_text, f'[{self.version.name}]')
 
         if len(encrypted_text) < 1:
-            raise ValidationError('Text nesmí být prázdný')
+            return ''
 
         if len(key) < self.min_key_length:
             raise ValidationError(f'Klíč musí být dlouhý alespoň {self.min_key_length} znaků')
