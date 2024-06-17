@@ -9,6 +9,8 @@ class TestTextSubstitution(unittest.TestCase):
     def test_empty_string(self):
         self.assertEqual(TextSubstitution.sub(''), '')
         self.assertEqual(TextSubstitution.sub_reverse(''), '')
+        self.assertEqual(TextSubstitution.sub_single('', '0'), '')
+        self.assertEqual(TextSubstitution.sub_reverse_single('', '0'), '')
 
     def test_alphabet(self):
         self.assertEqual(TextSubstitution.sub(string.ascii_letters), string.ascii_letters)
@@ -44,3 +46,33 @@ class TestTextSubstitution(unittest.TestCase):
     def test_sub_reverse_no_substitution(self):
         self.assertEqual(TextSubstitution.sub_reverse('hello world'), 'hello world')
         self.assertEqual(TextSubstitution.sub_reverse('VINYL'), 'VINYL')
+
+    def test_sub_single_empty_string(self):
+        self.assertEqual(TextSubstitution.sub_single('', '0'), '')
+
+    def test_sub_single_empty_char(self):
+        self.assertEqual(TextSubstitution.sub_single('test', ''), 'test')
+
+    def test_sub_single_nonexistent_char(self):
+        self.assertEqual(TextSubstitution.sub_single('test', 'x'), 'test')
+
+    def test_sub_single_existing_char(self):
+        self.assertEqual(TextSubstitution.sub_single('0', '0'), 'YLZE')
+        self.assertEqual(TextSubstitution.sub_single('012', '0'), 'YLZE12')
+
+    def test_sub_single_reserved_word(self):
+        with self.assertRaises(ValueError):
+            TextSubstitution.sub_single('testYLZE', '0')
+
+    def test_sub_reverse_single_empty_string(self):
+        self.assertEqual(TextSubstitution.sub_reverse_single('', '0'), '')
+
+    def test_sub_reverse_single_empty_char(self):
+        self.assertEqual(TextSubstitution.sub_reverse_single('test', ''), 'test')
+
+    def test_sub_reverse_single_nonexistent_char(self):
+        self.assertEqual(TextSubstitution.sub_reverse_single('test', 'x'), 'test')
+
+    def test_sub_reverse_single_existing_char(self):
+        self.assertEqual(TextSubstitution.sub_reverse_single('YLZE', '0'), '0')
+        self.assertEqual(TextSubstitution.sub_reverse_single('YLZEYLON', '0'), '0YLON')
