@@ -2,17 +2,19 @@ from tkinter import messagebox
 
 from customtkinter import *
 
-from core.crypts.DSACrypt import DSACrypt
-from GUI.Base.FrameBase import FrameBase
-from GUI.Shared import FileDialogs
+from Crypts.DSACrypt import DSACrypt
+from GUI.Base.PageFrame import PageFrame
+from GUI.Frames.DSA import FileDialogs
 from GUI.Shared.FileEntry import FileEntry
 
 
-class CheckFrame(FrameBase):
+class CheckPageFrame(PageFrame):
     def __init__(self, parent, return_frame: CTkFrame):
-        FrameBase.__init__(self, parent)
+        super().__init__(parent)
 
+        self.crypt = DSACrypt()
         self.return_frame = return_frame
+
         self.zip_file_path = StringVar()
         self.public_key_path = StringVar()
 
@@ -21,12 +23,12 @@ class CheckFrame(FrameBase):
 
         zip_file_path_frame = FileEntry(signed_file_frame,
                                         self.zip_file_path,
-                                        'Vybrat archiv',
-                                        'Podepsaný Soubor (Archiv)',
+                                        'Choose Archive',
+                                        'Signed File (Archive)',
                                         lambda: FileDialogs.ask_file(self.zip_file_path,
-                                                                        'Vyberte Podepsaný Archiv Se Souborem',
-                                                                     [('ZIP Archiv',
-                                                                          f'*.{DSACrypt().ext_archive}')]))
+                                                                     'Choose Archive with signed file',
+                                                                     [('zip',
+                                                                       f'*.{self.crypt.ext_archive}')]))
         zip_file_path_frame.grid(row=0, column=0, pady=(0, 15), sticky='w')
 
         public_key_frame = CTkFrame(self, corner_radius=10)
@@ -34,12 +36,12 @@ class CheckFrame(FrameBase):
 
         public_key_path_frame = FileEntry(public_key_frame,
                                           self.public_key_path,
-                                          'Vybrat klíč',
-                                          'Veřejný Klíč',
+                                          'Choose Key',
+                                          'Choose Public Key',
                                           lambda: FileDialogs.ask_file(self.public_key_path,
-                                                                          'Vyberte Veřejný Klíč',
-                                                                       [('Veřejný klíč',
-                                                                            f'*.{DSACrypt().ext_public}')]))
+                                                                       'Choose Public Key',
+                                                                       [('Public Key',
+                                                                         f'*.{self.crypt.ext_public}')]))
         public_key_path_frame.grid(row=0, column=0, pady=(0, 15), sticky='w')
 
         control_btn_frame = CTkFrame(self, fg_color='transparent')
@@ -48,7 +50,7 @@ class CheckFrame(FrameBase):
         back_btn = CTkButton(
             control_btn_frame,
             corner_radius=5,
-            text='Zpět',
+            text='Back',
             command=lambda: self.__return_back()
         )
         back_btn.grid(row=0, column=0, padx=(0, 130))
@@ -56,7 +58,7 @@ class CheckFrame(FrameBase):
         key_gen_btn = CTkButton(
             control_btn_frame,
             corner_radius=5,
-            text='Zkontrolovat Podpis',
+            text='Check Signature',
             command=lambda: self.__check_signature()
         )
         key_gen_btn.grid(row=0, column=1, padx=(130, 0))
@@ -69,22 +71,22 @@ class CheckFrame(FrameBase):
     def __check_signature(self):
         try:
             if not self.zip_file_path.get():
-                messagebox.showwarning('Upozornění', 'Musí být zadána správná cesta k archivu.')
+                messagebox.showwarning('Warning', 'Path to archive must be supplied.')
                 return
 
             if not self.public_key_path.get():
-                messagebox.showwarning('Upozornění', 'Musí být zadána správná cesta k veřejnému klíči.')
+                messagebox.showwarning('Warning', 'Path to public key must be supplied.')
                 return
 
-            result = DSACrypt().check_signature(self.zip_file_path.get(), self.public_key_path.get())
+            result = self.crypt.check_signature(self.zip_file_path.get(), self.public_key_path.get())
 
             if result:
-                messagebox.showinfo('Úspěch', 'Podpis je PLATNÝ.')
+                messagebox.showinfo('Success', 'Signature is valid.')
             else:
-                messagebox.showerror('Upozornění', 'Podpis je NEPLATNÝ.')
+                messagebox.showerror('Warning', 'Signature is not valid.')
 
         except Exception as ex:
             print(str(ex))
-            messagebox.showerror('Upozornění', 'Podpis nelze ověřit.')
+            messagebox.showerror('Warning', 'Signature cannot be verified.')
 
         self.__return_back()

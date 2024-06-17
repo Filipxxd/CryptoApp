@@ -19,21 +19,21 @@ class DSAPageFrame(PageFrame):
 
         sign_page_btn = CTkButton(
             buttons_frame,
-            text='Podepsat Soubor',
+            text='Sign File',
             command=lambda: sign_page.tkraise()
         )
         sign_page_btn.grid(row=0, column=0)
 
         check_page_btn = CTkButton(
             buttons_frame,
-            text='Zkontrolovat Podpis',
+            text='Check Signature',
             command=lambda: check_page.tkraise()
         )
         check_page_btn.grid(row=1, column=0, pady=10)
 
         back_btn = CTkButton(
             buttons_frame,
-            text='Zpět',
+            text='Back',
             command=lambda: self.return_frame.tkraise()
         )
         back_btn.grid(row=2, column=0)

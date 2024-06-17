@@ -1,39 +1,41 @@
-import tkinter as tk
+import os
 from glob import glob
-from tkinter import messagebox
+from tkinter import messagebox, StringVar
 
-from customtkinter import *
+from customtkinter import CTkFrame, CTkLabel, CTkButton
 from datetime import datetime
 
-from core.crypts.DSACrypt import DSACrypt
-from GUI.Base.FrameBase import FrameBase
-from GUI.Shared import FileDialogs
+from Crypts.DSACrypt import DSACrypt
+from GUI.Base.PageFrame import PageFrame
+from GUI.Frames.DSA import FileDialogs
 from GUI.Shared.FileEntry import FileEntry
-from core.ValidationError import ValidationError
+from Exceptions.ValidationError import ValidationError
 
 
-class SignFrame(FrameBase):
+class SignPageFrame(PageFrame):
     def __init__(self, parent: CTkFrame, return_frame: CTkFrame):
-        FrameBase.__init__(self, parent)
+        super().__init__(parent)
+
+        self.crypt = DSACrypt()
 
         self.return_frame = return_frame
 
-        self.private_key_path = tk.StringVar()
-        self.output_path = tk.StringVar()
-        self.file_path = tk.StringVar()
-        self.file_size = tk.StringVar()
-        self.time_created = tk.StringVar()
-        self.time_updated = tk.StringVar()
-        self.name = tk.StringVar()
-        self.type = tk.StringVar()
+        self.private_key_path = StringVar()
+        self.output_path = StringVar()
+        self.file_path = StringVar()
+        self.file_size = StringVar()
+        self.time_created = StringVar()
+        self.time_updated = StringVar()
+        self.name = StringVar()
+        self.type = StringVar()
 
         signature_file_frame = CTkFrame(self, corner_radius=10)
         signature_file_frame.grid(row=0, column=0)
 
         file_path_frame = FileEntry(signature_file_frame,
                                     self.file_path,
-                                    'Vybrat soubor',
-                                    'Podepisovaný Soubor',
+                                    'Choose File',
+                                    'File to Sign',
                                     self.__select_file)
         file_path_frame.grid(row=0, column=0)
 
@@ -60,9 +62,9 @@ class SignFrame(FrameBase):
 
         output_path = FileEntry(output_folder_frame,
                                 self.output_path,
-                                'Vybrat složku',
-                                'Výstupní Adresář',
-                                lambda: FileDialogs.ask_directory(self.output_path, 'Vyberte složku'))
+                                'Choose Directory',
+                                'Output Directory',
+                                lambda: FileDialogs.ask_directory(self.output_path, 'Choose Directory'))
         output_path.grid(row=0, column=0, pady=(0, 15), sticky='w')
 
         key_file_frame = CTkFrame(self, corner_radius=10)
@@ -70,12 +72,12 @@ class SignFrame(FrameBase):
 
         key_path_frame = FileEntry(key_file_frame,
                                    self.private_key_path,
-                                   'Vybrat klíč',
-                                   'Soukromý Klíč',
+                                   'Choose Key',
+                                   'Private Key',
                                    lambda: FileDialogs.ask_file(self.private_key_path,
-                                                                'Vyberte Soukromý Klíč',
-                                                                [('Soukromý klíč',
-                                                                  f'*.{DSACrypt().ext_private}')]))
+                                                                'Choose Private Key',
+                                                                [('Private Key',
+                                                                  f'*.{self.crypt.ext_private}')]))
         key_path_frame.grid(row=0, column=0, pady=(0, 15), sticky='w')
 
         control_btn_frame = CTkFrame(self, fg_color='transparent')
@@ -84,7 +86,7 @@ class SignFrame(FrameBase):
         back_btn = CTkButton(
             control_btn_frame,
             corner_radius=5,
-            text='Zpět',
+            text='Back',
             command=lambda: self.__return_back()
         )
         back_btn.grid(row=0, column=0, padx=(0, 60))
@@ -92,7 +94,7 @@ class SignFrame(FrameBase):
         key_gen_btn = CTkButton(
             control_btn_frame,
             corner_radius=5,
-            text='Generovat Klíče',
+            text='Generate Keys',
             command=lambda: self.__create_keys()
         )
         key_gen_btn.grid(row=0, column=1)
@@ -100,7 +102,7 @@ class SignFrame(FrameBase):
         key_gen_btn = CTkButton(
             control_btn_frame,
             corner_radius=5,
-            text='Podepsat Soubor',
+            text='Sign File',
             command=lambda: self.__sign_file()
         )
         key_gen_btn.grid(row=0, column=2, padx=(60, 0))
@@ -121,47 +123,49 @@ class SignFrame(FrameBase):
             path = self.output_path.get()
 
             if not os.path.lexists(path):
-                messagebox.showwarning('Upozornění', 'Musí být zadána výstupní složka.')
+                messagebox.showwarning('Warning', 'Output folder must be supplied.')
                 return
 
-            crypt = (DSACrypt(path))
-            crypt.get_key_files()
+            self.crypt.output_folder = path
+            self.crypt.get_key_files()
 
-            messagebox.showinfo('Úspěch', 'Klíče úspěšně vygenerovány.')
+            messagebox.showinfo('Success', 'Keys created successfully.')
 
-            key_files = glob(f'{path}/*.{crypt.ext_private}')
+            key_files = glob(f'{path}/*.{self.crypt.ext_private}')
             latest_private = max(key_files, key=os.path.getmtime)
             self.private_key_path.set(f'{latest_private}'.replace('\\', '/'))
 
         except ValidationError:
-            messagebox.showerror('Upozornění', 'Klíče nelze vygenerovat.')
+            messagebox.showerror('Warning', 'Keys cannot be generated.')
 
     def __sign_file(self):
         try:
             if not os.path.lexists(self.output_path.get()):
-                messagebox.showwarning('Upozornění', 'Musí být zadána výstupní složka.')
+                messagebox.showwarning('Warning', 'Output folder must be supplied.')
                 return
 
             if not os.path.lexists(self.file_path.get()):
-                messagebox.showwarning('Upozornění', 'Musí být zadána správná cesta k souboru.')
+                messagebox.showwarning('Warning', 'Path to file must be supplied.')
                 return
 
             if not os.path.lexists(self.private_key_path.get()):
-                messagebox.showwarning('Upozornění', 'Musí být zadána správná cesta k privátnímu klíči.')
+                messagebox.showwarning('Warning', 'Path to private key must be supplied.')
                 return
 
-            DSACrypt(self.output_path.get()).sign_file(self.file_path.get(), self.private_key_path.get())
-            messagebox.showinfo('Úspěch', 'Soubor úspěšně podepsán.')
+            self.crypt.output_folder = self.output_path.get()
+            self.crypt.sign_file(self.file_path.get(), self.private_key_path.get())
+
+            messagebox.showinfo('Success', 'File signed successfully.')
 
         except ValidationError:
-            messagebox.showerror('Upozornění', 'Soubor nelze podepsat.')
+            messagebox.showerror('Warning', 'File cannot be signed.')
 
         self.__return_back()
 
     def __select_file(self):
         FileDialogs.ask_file(self.file_path,
-                             'Vyberte soubor k podpisu',
-                             [('Všechny soubory', f'*')])
+                             'Choose file to be signed',
+                             [('All Files', f'*')])
 
         path = self.file_path.get()
 
@@ -171,11 +175,11 @@ class SignFrame(FrameBase):
         self.file_path.set(path)
 
         name = os.path.basename(path).split('.')
-        self.name.set(f'Název: {name[0]}')
-        self.type.set(f'Přípona: {name[1]}')
-        self.file_size.set(f'Velikost souboru: {os.path.getsize(path)} B')
+        self.name.set(f'Name: {name[0]}')
+        self.type.set(f'Extension: {name[1]}')
+        self.file_size.set(f'File Size: {os.path.getsize(path)} B')
 
         datetime_created = datetime.fromtimestamp(os.path.getctime(path)).strftime('%d/%m/%Y %H:%M:%S')
-        self.time_created.set(f'Datum vytvoření: {datetime_created}')
+        self.time_created.set(f'Date Created: {datetime_created}')
         datetime_updated = datetime.fromtimestamp(os.path.getmtime(path)).strftime('%d/%m/%Y %H:%M:%S')
-        self.time_updated.set(f'Datum aktualizace: {datetime_updated}')
+        self.time_updated.set(f'Date Updated: {datetime_updated}')
